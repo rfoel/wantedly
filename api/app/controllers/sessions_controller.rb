@@ -6,7 +6,7 @@ class SessionsController < ApiController
       allow_token_to_be_used_only_once_for(user)
       send_auth_token_for_valid_login_of(user)
     else
-      render_unauthorized("Error with your login or password")
+      render_unauthorized("Invalid credentials")
     end
   end
 
@@ -26,6 +26,6 @@ class SessionsController < ApiController
   end
 
   def logout
-    current_user.invalidate_token
+    current_user.invalidate_token if current_user
   end
 end

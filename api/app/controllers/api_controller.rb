@@ -23,5 +23,5 @@ class ApiController < ApplicationController
         user
       end
     end
-  end 
+  end
 end
