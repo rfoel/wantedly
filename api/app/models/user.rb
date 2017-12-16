@@ -1,7 +1,9 @@
 class User < ApplicationRecord
   has_secure_password
   has_secure_token
-  has_and_belongs_to_many :skills
+  
+  has_many :user_skills
+  has_many :skills, through: :user_skills
   
   validates_presence_of :name, :email, :password_digest
   validates :email, uniqueness: true
