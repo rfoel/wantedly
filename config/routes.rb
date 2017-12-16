@@ -1,9 +1,16 @@
 Rails.application.routes.draw do
 
-  resources :users, controller: 'users'
+  resources :users, controller: 'users'  do
+    get "skills" => "users#user_skills"
+  end
   resource :user, controller: 'user' do
     post "sign_in" => "sessions#create"
     delete "sign_out" => "sessions#destroy"
+    post "skill" => "user#create_skill"
+    delete "skill" => "user#destroy_skill"
   end
-  resources :users, controller: 'skills'
+  resources :skills, controller: 'skills', only: [:index, :create, :show] do
+    get "users" => "skills#skill_users"    
+  end
+
 end
