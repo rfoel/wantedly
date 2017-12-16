@@ -1,5 +1,5 @@
 class UsersController < ApiController
-  before_action :set_user, only: [:show]
+  before_action :set_user, only: [:show, :user_skills]
 
    def show
     render json: @user
@@ -14,10 +14,14 @@ class UsersController < ApiController
     end
   end
 
+  def user_skills
+    render json: @user.skills 
+  end
+
   private
 
   def set_user
-    @user = User.select(:id, :name, :email).where(id: params[:id])
+    @user = User.select(:id, :name, :email).where(id: params[:id] || params[:user_id]).first
   end
 
   def user_params

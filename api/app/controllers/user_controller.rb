@@ -36,9 +36,36 @@ class UserController < ApiController
     end
   end
 
+  def create_skill
+    begin
+      if current_user.user_skills.create(skill_params)
+        render json: {}, status: :ok
+      end
+    rescue StandardError => e
+      puts e.inspect
+      render json: current_user.errors, status: :unprocessable_entity
+    end
+  end
+
+  def destroy_skill
+    begin
+      skill = current_user.user_skills.find(skill_params[:skill_id])
+      if current_user.user_skills.destroy(skill)
+        render json: {}, status: :ok
+      end
+    rescue StandardError => e
+      puts e.inspect
+      render json: current_user.errors, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def user_params
     params.permit :name, :email
+  end
+
+  def skill_params
+    params.permit :skill_id  
   end
 end
