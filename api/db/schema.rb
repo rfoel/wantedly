@@ -14,10 +14,10 @@ ActiveRecord::Schema.define(version: 20171216015323) do
 
   create_table "endorsements", force: :cascade do |t|
     t.integer "user_skills_id"
-    t.integer "sender_id"
+    t.integer "endorser_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["sender_id"], name: "index_endorsements_on_sender_id"
+    t.index ["endorser_id"], name: "index_endorsements_on_endorser_id"
     t.index ["user_skills_id"], name: "index_endorsements_on_user_skills_id"
   end
 
