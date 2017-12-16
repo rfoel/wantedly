@@ -5,4 +5,6 @@ Rails.application.routes.draw do
     post "sign_in" => "sessions#create"
     delete "sign_out" => "sessions#destroy"
   end
+  resources :users, controller: 'skills'
+  
 end
