@@ -37,12 +37,9 @@ class UserController < ApiController
   end
 
   def create_skill
-    begin
-      if current_user.user_skills.create(skill_params)
-        render json: {}, status: :ok
-      end
-    rescue StandardError => e
-      puts e.inspect
+    if current_user.user_skills.create(skill_params)
+      render json: {}, status: :ok
+    else
       render json: current_user.errors, status: :unprocessable_entity
     end
   end

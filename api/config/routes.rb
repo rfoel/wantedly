@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
   resources :users, controller: 'users'  do
     get "skills" => "users#user_skills"
+    post "skills" => "users#create_skill"
   end
   resource :user, controller: 'user' do
     post "sign_in" => "sessions#create"

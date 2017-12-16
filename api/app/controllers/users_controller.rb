@@ -1,5 +1,5 @@
 class UsersController < ApiController
-  before_action :set_user, only: [:show, :user_skills]
+  before_action :set_user, only: [:show, :user_skills, :create_skill]
 
    def show
     render json: @user
@@ -18,6 +18,14 @@ class UsersController < ApiController
     render json: @user.skills 
   end
 
+  def create_skill
+    if @user.user_skills.create(skill_params)
+      render json: {}, status: :ok
+    else
+      render json: @user.errors, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_user
@@ -26,5 +34,9 @@ class UsersController < ApiController
 
   def user_params
     params.permit :name, :email, :password
+  end
+
+  def skill_params
+    params.permit :skill_id  
   end
 end
