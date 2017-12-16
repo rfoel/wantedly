@@ -2,6 +2,9 @@ class User < ApplicationRecord
   has_secure_password
   has_secure_token
 
+  validates_presence_of :name, :email, :password_digest
+  validates :email, uniqueness: true
+
   def invalidate_token
     self.update_columns(token: nil)
   end

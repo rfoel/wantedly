@@ -1,5 +1,4 @@
-class UsersController < ApplicationController
-  before_action :require_login
+class UsersController < ApiController
   before_action :set_user, only: [:show]
 
    def show
@@ -18,10 +17,10 @@ class UsersController < ApplicationController
   private
 
   def set_user
-    @user = User.find params[:id]
+    @user = User.select(:id, :name, :email).where(id: params[:id])
   end
 
   def user_params
-    params.require(:user).permit :name, :email
+    params.permit :name, :email, :password
   end
 end

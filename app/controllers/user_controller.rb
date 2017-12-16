@@ -1,5 +1,5 @@
-class UserController < ApplicationController
-  before_action :require_login  
+class UserController < ApiController
+  before_action :require_login
 
   def show
     render json: {
@@ -37,8 +37,8 @@ class UserController < ApplicationController
   end
 
   private
-  
+
   def user_params
-    params.require(:user).permit :name, :email
+    params.permit :name, :email
   end
 end

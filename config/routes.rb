@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
-  scope :format => true, :constraints => { :format => 'json' } do
-    post "user/sign_in" => "sessions#create"
-    delete "user/sign_out" => "sessions#destroy"
-    resource :user, controller: 'user'
-    resources :users, controller: 'users'
+
+  resources :users, controller: 'users'
+  resource :user, controller: 'user' do
+    post "sign_in" => "sessions#create"
+    delete "sign_out" => "sessions#destroy"
   end
 end
