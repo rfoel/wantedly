@@ -40,10 +40,10 @@
           </div>
 
           <b-field label="What are your skills?">
-            <b-taginput v-model="tags" :data="filteredTags" field="user.skills" placeholder="Add a skill" @typing="getFilteredTags">
+            <b-taginput v-model="user.skills" :data="filteredSkills" field="name" placeholder="Add a skill" autocomplete @typing="getFilteredSkills">
             </b-taginput>
           </b-field>
-          <p class="help">Don't worry, you can add more later</p>
+          <p class="help">Don't worry, you can add more and different ones later.</p>
 
           <div class="has-text-centered">
             <button class="button is-primary is-outlined has-margin-top-30">Register</button>
@@ -61,11 +61,33 @@ import { required, minLength, email } from "vuelidate/lib/validators"
 export default {
 	data() {
 		return {
+      filteredSkills: this.skills,
 			user: {
 				name: "",
 				email: "",
-				password: ""
+				password: "",
+				skills: []
 			}
+		}
+	},
+	computed: {
+		skills() {
+			return this.$store.state.skills
+		}
+	},
+	created() {
+		this.$store.dispatch("getSkills")
+	},
+	methods: {
+		getFilteredSkills(text) {
+			this.filteredSkills = this.skills.filter(option => {
+				return (
+					option.name
+						.toString()
+						.toLowerCase()
+						.indexOf(text.toLowerCase()) >= 0
+				)
+			})
 		}
 	},
 	validations: {
@@ -96,7 +118,6 @@ export default {
 
 
 <style lang="scss" scoped>
-
 .has-margin-top-30 {
 	margin-top: 30px;
 }
