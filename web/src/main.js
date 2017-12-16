@@ -4,12 +4,15 @@ import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import Vuex from 'vuex'
+import Buefy from 'buefy'
 
 import App from './App'
 import router from './router'
 
 Vue.use(VueAxios, axios)
 Vue.use(Vuex)
+Vue.use(Buefy)
+
 Vue.config.productionTip = false
 
 new Vue({
