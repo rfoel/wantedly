@@ -44,6 +44,7 @@ GEM
     byebug (9.1.0)
     concurrent-ruby (1.0.5)
     crass (1.0.3)
+    database_cleaner (1.6.2)
     erubi (1.7.0)
     faker (1.8.5)
       i18n (~> 0.9.1)
@@ -127,6 +128,7 @@ PLATFORMS
 DEPENDENCIES
   bcrypt (~> 3.1.7)
   byebug
+  database_cleaner
   faker
   listen (>= 3.0.5, < 3.2)
   puma (~> 3.7)
