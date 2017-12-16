@@ -42,13 +42,16 @@ $link: $primary;
 $link-invert: $primary-invert;
 $link-focus-border: $primary;
 
+$input-shadow: none;
+
 @import "~bulma";
 @import "~buefy/src/scss/buefy";
 
 #app {
 	display: flex;
 	flex-direction: column;
-	min-height: 100vh;
+	min-height: calc(100vh - 52px);
+	margin-top: 52px;
 }
 
 ::selection {
