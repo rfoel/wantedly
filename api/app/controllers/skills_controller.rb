@@ -4,24 +4,20 @@ class SkillsController < ApiController
 
   def index
     @skills = Skill.order(id: :desc)
-    render json: @skills
+    json_response(@skills, :ok)
   end
 
   def show
-    render json: @skill
+    json_response(@skill, :ok)
   end
 
   def create
-    @skill = Skill.new skill_params
-    if @skill.save
-      render json: @skill, status: :created
-    else
-      render json: @skill.errors, status: :unprocessable_entity
-    end
+    @skill = Skill.create!(skill_params)
+    json_response(@skill, :created)
   end
 
   def skill_users
-    render json: @skill.users
+    json_response(@skill.users, :ok)
   end
 
   private
