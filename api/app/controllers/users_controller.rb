@@ -1,29 +1,29 @@
 class UsersController < ApiController
-  before_action :set_user, only: [:show, :user_skills, :create_skill]
+  before_action :require_login, only: [:endorse]  
+  before_action :set_user, only: [:show, :user_skills, :create_skill, :endorse]
 
    def show
     render json: @user
   end
 
   def create
-    @user = User.new user_params
-    if @user.save
-      render json: @user, status: :created
-    else
-      render json: @user.errors, status: :unprocessable_entity
-    end
+    @user = User.create!(user_params)
+    json_response(@user, :created)
   end
 
   def user_skills
-    render json: @user.skills 
+    json_response(@user.skills, :ok)
   end
 
   def create_skill
-    if @user.user_skills.create(skill_params)
-      render json: {}, status: :ok
-    else
-      render json: @user.errors, status: :unprocessable_entity
-    end
+    @user.user_skills.create!(skill_params)
+    json_response(:ok)
+  end
+
+  def endorse
+    user_skill = UserSkill.find_by_user_id_and_skill_id(params[:user_id], params[:skill_id])
+    endorsement = Endorsement.create!(user_skill: user_skill, endorser: current_user)
+    json_response(:ok)
   end
 
   private
@@ -37,6 +37,6 @@ class UsersController < ApiController
   end
 
   def skill_params
-    params.permit :skill_id  
+    params.permit :skill_id
   end
 end
