@@ -2,7 +2,7 @@ Rails.application.routes.draw do
 
   resources :users, controller: 'users'  do
     get "skills" => "users#user_skills"
-    post "skills" => "users#create_skill"
+    post "skills" => "users#create_user_skill"
     get "skills/:skill_id/endorse" => "users#endorse"
   end
   resource :user, controller: 'user' do
