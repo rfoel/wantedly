@@ -3,10 +3,8 @@
     <div class="container">
       <div class="content has-text-centered">
         <p>
-          <strong>Bulma</strong> by
-          <a href="http://jgthms.com">Jeremy Thomas</a>. The source code is licensed
-          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content is licensed
-          <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+          <strong>Wantedly</strong> challenge by
+          <a href="https://github.com/rfoel/wantedly">Rafael Franco</a>.
         </p>
       </div>
     </div>

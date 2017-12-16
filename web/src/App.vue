@@ -51,6 +51,10 @@ $link-focus-border: $primary;
 	min-height: 100vh;
 }
 
+::selection {
+	background: $primary;
+}
+
 .flex-grow {
 	flex-grow: 1;
 }

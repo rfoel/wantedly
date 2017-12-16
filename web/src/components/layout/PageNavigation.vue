@@ -1,22 +1,21 @@
 <template>
-  <nav class="navbar is-transparent">
+  <nav class="navbar is-fixed-top is-transparent">
     <div class="container">
       <div class="navbar-brand">
         <a class="navbar-item" href="https://bulma.io">
           <img src="/static/images/wantedly_logo.svg" width="112" height="28">
         </a>
-        <div class="navbar-burger burger" data-target="navbarExampleTransparentExample">
+        <div class="navbar-burger burger" :class="{ 'is-active': isActive }" @click="navbarToggle">
           <span></span>
           <span></span>
           <span></span>
         </div>
       </div>
-
-      <div id="navbarExampleTransparentExample" class="navbar-menu">
+      <div class="navbar-menu" :class="{ 'is-active': isActive }">
         <div class="navbar-end">
-          <a class="navbar-item" href="https://bulma.io/">
+          <router-link class="navbar-item" :to="{name: 'home'}">
             Home
-          </a>
+          </router-link>
           <b-dropdown position="is-bottom-left">
             <a class="navbar-item" slot="trigger">
               <span>Login</span>
@@ -36,7 +35,7 @@
                       </b-input>
                     </b-field>
                     <button class="button is-primary">Login</button>
-                    <button class="button is-secondary is-right">Register</button>
+                    <router-link :to="{name: 'sign_up'}" class="button is-primary is-outlined is-pulled-right">Register</router-link>
                   </section>
                 </div>
               </form>
@@ -47,3 +46,29 @@
     </div>
   </nav>
 </template>
+
+<script>
+export default {
+	data() {
+		return {
+			isActive: false
+		}
+	},
+	methods: {
+		navbarToggle() {
+			this.isActive = !this.isActive
+		}
+	}
+}
+</script>
+
+
+<style lang="scss" scoped>
+.navbar-brand {
+	opacity: 0.8;
+	&:hover,
+	:active {
+		opacity: 1;
+	}
+}
+</style>
