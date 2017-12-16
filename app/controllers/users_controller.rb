@@ -28,7 +28,7 @@ class UsersController < ApiController
   end
 
   def endorse_user_skill user_skill, current_user
-    if current_user.id != user_skill.user.id
+    if current_user != user_skill.user
       Endorsement.create!(user_skill: user_skill, endorser: current_user)
     end
   end
