@@ -22,7 +22,9 @@ class UsersController < ApiController
 
   def endorse
     user_skill = UserSkill.find_by_user_id_and_skill_id(params[:user_id], params[:skill_id])
-    endorsement = Endorsement.create!(user_skill: user_skill, endorser: current_user)
+    if current_user.id != user_skill.user.id
+      Endorsement.create!(user_skill: user_skill, endorser: current_user)
+    end
     json_response(:ok)
   end
 
