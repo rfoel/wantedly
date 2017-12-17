@@ -41,3 +41,6 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+# This gem uses UIfaces.com ( https://www.uifaces.com/ ) to fake user pictures on your app.
+gem 'ui_faces'
