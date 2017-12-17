@@ -4,11 +4,11 @@
       <div class="column"></div>
       <div class="column is-full-tablet is-one-quarter-desktop">
         <h1 class="title is-3 has-text-centered">Sign up</h1>
-        <form>
+        <form @submit.prevent="submit">
           <div class="field">
             <label class="label">Name</label>
             <div class="control">
-              <input class="input" type="text" placeholder="Your name" v-model.trim="user.name" @input="$v.user.name.$touch()" :class="{ 'is-danger': $v.user.name.$error }">
+              <input name="name" class="input" type="text" placeholder="Your name" v-model.trim="user.name" @input="$v.user.name.$touch()" :class="{ 'is-danger': $v.user.name.$error }">
             </div>
             <p class="help is-danger" v-if="$v.user.name.$error">
               <span v-if="!$v.user.name.required">Name is required</span>
@@ -18,19 +18,19 @@
           <div class="field">
             <label class="label">Email</label>
             <div class="control has-icons-right">
-              <input class="input" type="email" placeholder="Your email" v-model.trim="user.email" @blur="$v.user.email.$touch()" :class="{ 'is-danger': $v.user.email.$error }">
+              <input name="email" class="input" type="text" placeholder="Your email" v-model.trim="user.email" @blur="$v.user.email.$touch()" @input="$v.user.email.$reset()" :class="{ 'is-danger': $v.user.email.$error }">
             </div>
             <p class="help is-danger" v-if="$v.user.email.$error">
               <span v-if="!$v.user.email.required">Email is required</span>
               <span v-else-if="!$v.user.email.email">Email is invalid</span>
-              <span v-else-if="!$v.user.email.isUnique">This email already exists</span>
+              <span v-else-if="!$v.user.email.isUnique">Email already in use</span>
             </p>
           </div>
 
           <div class="field">
             <label class="label">Password</label>
             <div class="control">
-              <input class="input" type="password" placeholder="•••• ••••••••" v-model="user.password" @input="$v.user.password.$touch()"
+              <input name="password" class="input" type="password" placeholder="•••• ••••••••" v-model="user.password" @input="$v.user.password.$touch()"
                 :class="{ 'is-danger': $v.user.password.$error }">
             </div>
             <p class="help is-danger" v-if="$v.user.password.$error">
@@ -40,13 +40,22 @@
           </div>
 
           <b-field label="What are your skills?">
-            <b-taginput v-model="user.skills" :data="filteredSkills" field="name" placeholder="Add a skill" autocomplete @typing="getFilteredSkills">
+            <b-taginput v-model="user.skills" :data="filteredSkills" icon="plus" field="name" placeholder="Add a skill" autocomplete
+              @typing="getFilteredSkills">
             </b-taginput>
           </b-field>
           <p class="help">Don't worry, you can add more and different ones later.</p>
 
           <div class="has-text-centered">
-            <button class="button is-primary is-outlined has-margin-top-30">Register</button>
+            <button class="button is-primary is-outlined has-margin-top-30" :class="{ 'is-loading': isLoading, 'is-success': status, 'is-danger': status === false }">
+              <span v-if="!isLoading && status === ''">Register</span>
+              <span v-else-if="status">
+                <i class="fa fa-check"></i>
+              </span>
+              <span v-else-if="status === false">
+                <i class="fa fa-close"></i>
+              </span>
+            </button>
           </div>
         </form>
       </div>
@@ -61,7 +70,9 @@ import { required, minLength, email } from "vuelidate/lib/validators"
 export default {
 	data() {
 		return {
-      filteredSkills: this.skills,
+			isLoading: false,
+			status: "",
+			filteredSkills: this.skills,
 			user: {
 				name: "",
 				email: "",
@@ -88,6 +99,32 @@ export default {
 						.indexOf(text.toLowerCase()) >= 0
 				)
 			})
+		},
+		submit() {
+			this.$v.user.$touch()
+			if (!this.$v.user.$invalid) {
+				this.isLoading = true
+				this.$store
+					.dispatch("signUp", this.user)
+					.then(response => {
+						this.isLoading = false
+						if (!response.error) {
+							this.status = true
+							setTimeout(() => {
+								this.status = ""
+								this.$router.push({
+									name: "home"
+								})
+							}, 1000)
+						} else {
+							this.status = false
+							setTimeout(() => {
+								this.status = ""
+							}, 1000)
+						}
+					})
+					.catch(error => {})
+			}
 		}
 	},
 	validations: {
@@ -101,9 +138,14 @@ export default {
 				isUnique(value) {
 					if (value === "") return true
 					return new Promise((resolve, reject) => {
-						setTimeout(() => {
-							resolve(typeof value === "string" && value.length % 2 !== 0)
-						}, 350 + Math.random() * 300)
+						this.$store
+							.dispatch("checkUniqueness", { email: this.user.email })
+							.then(response => {
+								if(response.error) resolve()
+							})
+							.catch(error => {
+								reject(error)
+							})
 					})
 				}
 			},

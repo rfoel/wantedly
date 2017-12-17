@@ -11,7 +11,9 @@ import router from "./router"
 import store from "./store"
 
 Vue.use(VueAxios, axios)
-Vue.use(Buefy)
+Vue.use(Buefy, {
+  defaultIconPack: "fa"
+})
 Vue.use(Vuelidate)
 
 Vue.config.productionTip = process.env.NODE_ENV === "production"

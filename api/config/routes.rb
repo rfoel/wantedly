@@ -15,4 +15,6 @@ Rails.application.routes.draw do
     get "users" => "skills#skill_users"    
   end
 
+  post "checkUniqueness" => "api#check_uniqueness"
+
 end

@@ -20,10 +20,29 @@ export default new Vuex.Store({
       axios
         .get("/skills")
         .then(response => {
-          console.log(response.data)
           commit("setSkills", response.data)
         })
         .catch(error => {})
+    },
+    checkUniqueness({}, data) {
+      return axios
+      .post("/checkUniqueness", data)
+      .then(response => {
+        return response.data
+      })
+      .catch(error => {
+        return error
+      })
+    },
+    signUp({ commit }, data) {
+      axios
+        .post("/users", data)
+        .then(response => {
+          console.log(response)
+        })
+        .catch(error => {
+          console.log(error)
+        })
     }
   }
 })
