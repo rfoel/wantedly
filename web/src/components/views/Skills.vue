@@ -32,9 +32,10 @@
           </b-taginput>
         </b-field>
       </div>
+
       <div v-else>
         <div class="field" v-for="(user_skill, index) in user_skills" :key="index">
-          <b-tag rounded :keep-first="true" size="is-medium">{{user_skill.endorsements.length}}</b-tag> {{user_skill.name}}
+          <b-tag rounded :keep-first="true" size="is-medium" :class="{'can-endorse': !canEdit}"><span>{{user_skill.endorsements.length}}</span></b-tag> {{user_skill.name}}
         </div>
       </div>
     </div>
@@ -54,6 +55,11 @@ export default {
 			user_skills: [],
 			filteredSkills: this.skills,
 			updated_skills: []
+		}
+	},
+	computed: {
+		current_user() {
+			return this.$store.state.current_user
 		}
 	},
 	mounted() {
@@ -85,18 +91,18 @@ export default {
 				this.skills = response
 			})
 			if (this.$route.params.id) {
-				this.canEdit = false
+				this.canEdit = this.$route.params.id === this.current_user.id ? true : false
 				this.$store
 					.dispatch("getUserSkills", {
 						id: this.$route.params.id
 					})
 					.then(response => {
-						this.user_skills = response.sort((a, b) => (a.name < b.name && a.endorsements.length >= b.endorsements.length ? -1 : 1))
+						this.user_skills = response.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() && a.endorsements.length >= b.endorsements.length ? -1 : 1))
 					})
 			} else {
 				this.canEdit = true
 				this.$store.dispatch("getCurrentUserSkills").then(response => {
-					this.user_skills = response.sort((a, b) => (a.name < b.name && a.endorsements.length >= b.endorsements.length ? -1 : 1))
+					this.user_skills = response.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() && a.endorsements.length >= b.endorsements.length ? -1 : 1))
 				})
 			}
 		},
@@ -150,5 +156,22 @@ $primary: #00a4bb;
 	height: 40px;
 	margin-right: 10px;
 	margin-bottom: 10px;
+	cursor: pointer;
+	&.can-endorse {
+		&:hover {
+			color: #fff;
+			background: $primary;
+			span {
+				display: none;
+			}
+			&::after {
+				content: "+1";
+			}
+		}
+		&:active {
+			color: #fff;
+			background: darken($primary, 5%);
+		}
+	}
 }
 </style>

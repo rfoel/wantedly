@@ -106,7 +106,6 @@ export default {
 			isActive: false,
 			isLoading: false,
 			status: "",
-			user_profile: {},
 			user: {
 				email: "",
 				password: ""
@@ -114,28 +113,16 @@ export default {
 		}
 	},
 	computed: {
+		user_profile() {
+			return this.$store.state.current_user
+		},
 		token() {
 			return this.$store.state.token ? true : false
 		}
 	},
-	watch: {
-		token() {
-			this.getUser()
-		}
-	},
-	created() {
-		this.getUser()
-	},
 	methods: {
 		navbarToggle() {
 			this.isActive = !this.isActive
-		},
-		getUser() {
-			if (this.token) {
-				this.$store.dispatch("getProfile").then(response => {
-					this.user_profile = response
-				})
-			}
 		},
 		submit() {
 			this.$v.user.$touch()

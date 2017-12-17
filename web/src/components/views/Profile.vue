@@ -73,10 +73,7 @@ export default {
 	data() {
 		return {
 			isLoading: false,
-			status: "",
-			user: {
-				skills: []
-			}
+			status: ""
 		}
 	},
 	computed: {
@@ -89,51 +86,9 @@ export default {
 				}
 			}).href
 			return a.protocol + "//" + a.host + a.pathname
-		}
-	},
-	created() {
-		this.$store.dispatch("getProfile").then(response => {
-			this.user = response
-		})
-	},
-	methods: {
-		submit() {
-			this.$v.user.$touch()
-			if (!this.$v.user.$invalid) {
-				this.isLoading = true
-				this.$store
-					.dispatch("signUp", this.user)
-					.then(response => {
-						this.isLoading = false
-						if (!response.error) {
-							this.$toast.open({
-								duration: 3000,
-								message: "Signed up successfully",
-								position: "is-top",
-								type: "is-success"
-							})
-							this.status = true
-							setTimeout(() => {
-								this.status = ""
-								this.$router.push({
-									name: "home"
-								})
-							}, 1000)
-						} else {
-							this.$toast.open({
-								duration: 3000,
-								message: "Something went terribly wrong",
-								position: "is-top",
-								type: "is-danger"
-							})
-							this.status = false
-							setTimeout(() => {
-								this.status = ""
-							}, 3000)
-						}
-					})
-					.catch(error => {})
-			}
+		},
+		user() {
+			return this.$store.state.current_user
 		}
 	}
 }

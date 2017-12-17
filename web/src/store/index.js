@@ -8,16 +8,23 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    token: !!localStorage.token ? JSON.parse(localStorage.token) : false
+    token: !!localStorage.token ? localStorage.token : false,
+    current_user: !!localStorage.current_user ? JSON.parse(localStorage.current_user) : false
   },
   mutations: {
     signIn(state, token) {
-      localStorage.token = JSON.stringify(token)
+      localStorage.token = token
       state.token = token
+    },
+    setUser(state, data) {
+      localStorage.current_user = JSON.stringify(data)      
+      state.current_user = data
     },
     signOut(state) {
       localStorage.removeItem("token")
+      localStorage.removeItem("current_user")
       state.token = false
+      state.current_user = false
     }
   },
   actions: {
@@ -40,11 +47,10 @@ export default new Vuex.Store({
         })
     },
     signUp({ commit }, data) {
-      console.log(data)
       return axios
         .post("/users", data)
         .then(response => {
-          commit("signIn", response.data.token)
+          commit("signIn", response.data)
           return response
         })
         .catch(error => {
@@ -56,6 +62,7 @@ export default new Vuex.Store({
         .post("/user/sign_in", data)
         .then(response => {
           commit("signIn", response.data.token)
+          commit("setUser", response.data)
           return response
         })
         .catch(error => {
@@ -106,8 +113,6 @@ export default new Vuex.Store({
         })
     },
     updateSkills({}, data) {
-      console.log(data)
-
       return axios
         .post("/user/update_skills", data, {
           headers: {
