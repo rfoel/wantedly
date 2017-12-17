@@ -18,7 +18,7 @@
 
           <div class="field">
             <label class="label">Email</label>
-            <div class="control has-icons-right">
+            <div class="control">
               <input name="email" class="input" type="text" placeholder="Your email" v-model.trim="user.email" @blur="$v.user.email.$touch()"
                 @input="$v.user.email.$reset()" :class="{ 'is-danger': $v.user.email.$error }">
             </div>
@@ -63,7 +63,7 @@
           </div>
 
           <b-field label="What are your skills?">
-            <b-taginput v-model="user.skills" :data="filteredSkills" icon="plus" field="name" placeholder="Add a skill" autocomplete
+            <b-taginput v-model="user_skills" :data="filteredSkills" icon="plus" field="name" placeholder="Add a skill" autocomplete
               @typing="getFilteredSkills">
             </b-taginput>
           </b-field>
@@ -103,9 +103,9 @@ export default {
 				occupation: "",
 				location: "",
 				bio: "",
-				password: "",
-				skills: []
-			}
+				password: ""
+			},
+			user_skills: []
 		}
 	},
 	created() {
@@ -123,13 +123,16 @@ export default {
 						.indexOf(text.toLowerCase()) >= 0
 				)
 			})
+			if (!this.filteredSkills.length) {
+				this.filteredSkills = [{ name: text }]
+			}
 		},
 		submit() {
 			this.$v.user.$touch()
 			if (!this.$v.user.$invalid) {
 				this.isLoading = true
 				this.$store
-					.dispatch("signUp", this.user)
+					.dispatch("signUp", { user: this.user, skills: this.user_skills })
 					.then(response => {
 						this.isLoading = false
 						if (!response.error) {
@@ -194,9 +197,9 @@ export default {
 			password: {
 				required,
 				minLength: minLength(6)
-			},
-			skills: {}
-		}
+			}
+		},
+		user_skills: {}
 	}
 }
 </script>

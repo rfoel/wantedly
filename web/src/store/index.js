@@ -40,6 +40,7 @@ export default new Vuex.Store({
         })
     },
     signUp({ commit }, data) {
+      console.log(data)
       return axios
         .post("/users", data)
         .then(response => {

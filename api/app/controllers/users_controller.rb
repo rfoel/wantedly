@@ -9,6 +9,9 @@ class UsersController < ApiController
   def create
     @user = User.create!(user_params)
     @user.avatar = UiFaces.face
+    params[:skills].each do |skill|
+      @user.skills << Skill.find_or_create(skill[:name])
+    end
     @user.save!
     json_response(@user, :created)
   end
@@ -48,7 +51,7 @@ class UsersController < ApiController
   end
 
   def user_params
-    params.permit :name, :email, :occupation, :location, :bio, :password
+    params.require(:user).permit :name, :email, :password, :occupation, :location, :bio
   end
 
   def skill_params

@@ -37,7 +37,7 @@
             <article class="tile is-child notification is-light">
               <div class="content">
                 <p class="title is-6">Your profile link
-                  <router-link :to="{name: 'users_profile', params:{ id: user.id }}">
+                  <router-link :to="{name: 'user', params:{ id: user.id }}">
                     <i class="fa fa-external-link"></i>
                   </router-link>
                 </p>
@@ -83,7 +83,7 @@ export default {
 		profile_link() {
 			const a = document.createElement("a")
 			a.href = this.$router.resolve({
-				name: "users_profile",
+				name: "user",
 				params: {
 					id: this.user.id
 				}
