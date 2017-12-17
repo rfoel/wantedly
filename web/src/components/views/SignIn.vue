@@ -1,58 +1,10 @@
 <template>
-  <nav class="navbar is-fixed-top is-transparent">
-    <div class="container">
-      <div class="navbar-brand">
-        <router-link class="navbar-item" :to="{name: 'home'}">
-          <img src="/static/images/wantedly_logo.svg" width="112" height="48">
-        </router-link>
-        <div class="navbar-burger burger" :class="{ 'is-active': isActive }" @click="navbarToggle">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-      <div class="navbar-menu" :class="{ 'is-active': isActive }">
-        <div class="navbar-end">
-          <router-link class="navbar-item" :to="{name: 'home'}">
-            Home
-          </router-link>
-          <router-link class="navbar-item" :to="{name: 'search'}">
-            Search
-          </router-link>
-          <hr class="dropdown-divider">
-          <router-link class="navbar-item" :to="{name: 'sign_up'}" v-if="!user_profile">
-            Sign up
-          </router-link>
-          <b-dropdown position="is-bottom-left" v-if="user_profile">
-            <a class="navbar-item" slot="trigger">
-              <figure class="image is-48x48">
-                <img :src="user_profile.avatar">
-              </figure>
-            </a>
-            <b-dropdown-item custom paddingless>
-              <a class="dropdown-item">
-                <h1 class="title is-6">{{user_profile.name}}</h1>
-                <h2 class="subtitle is-6"> {{user_profile.email}}</h2>
-              </a>
-              <hr class="dropdown-divider">
-              <router-link class="dropdown-item" :to="{name: 'profile'}">
-                Profile
-              </router-link>
-              <hr class="dropdown-divider">
-              <a class="dropdown-item" @click="signOut">
-                Log out
-              </a>
-            </b-dropdown-item>
-          </b-dropdown>
-          <b-dropdown position="is-bottom-left" v-if="!user_profile">
-            <a class="navbar-item" slot="trigger">
-              <span>Log in</span>
-              <b-icon class="fa fa-angle-down"></b-icon>
-            </a>
-            <b-dropdown-item custom paddingless>
-              <form @submit.prevent="submit">
-                <div class="modal-card" style="width:300px;">
-                  <section class="modal-card-body">
+  <section class="container section">
+    <div class="columns">
+      <div class="column"></div>
+      <div class="column is-full-tablet is-one-quarter-desktop">
+        <h1 class="title is-3 has-text-centered">Sign in</h1>
+        <form @submit.prevent="submit">
                     <div class="field">
                       <label class="label">Email</label>
                       <div class="control has-icons-right">
@@ -86,15 +38,11 @@
                       </span>
                     </button>
                     <router-link :to="{name: 'sign_up'}" class="button is-primary is-outlined is-pulled-right">Sign up</router-link>
-                  </section>
-                </div>
-              </form>
-            </b-dropdown-item>
-          </b-dropdown>
-        </div>
+        </form>
       </div>
+      <div class="column"></div>
     </div>
-  </nav>
+  </section>
 </template>
 
 <script>
@@ -103,7 +51,6 @@ import { required, minLength, email } from "vuelidate/lib/validators"
 export default {
 	data() {
 		return {
-			isActive: false,
 			isLoading: false,
 			status: "",
 			user: {
@@ -112,15 +59,8 @@ export default {
 			}
 		}
 	},
-	computed: {
-		user_profile() {
-			return this.$store.state.user
-		}
-	},
+
 	methods: {
-		navbarToggle() {
-			this.isActive = !this.isActive
-		},
 		submit() {
 			this.$v.user.$touch()
 			if (!this.$v.user.$invalid) {
@@ -154,24 +94,6 @@ export default {
 					})
 					.catch(error => {})
 			}
-		},
-		signOut() {
-			this.$store
-				.dispatch("signOut")
-				.then(response => {
-					if (!response.error) {
-						this.$toast.open({
-							duration: 3000,
-							message: "Logged out successfully",
-							position: "is-top",
-							type: "is-success"
-						})
-						this.$router.push({
-							name: "home"
-						})
-					}
-				})
-				.catch(error => {})
 		}
 	},
 	validations: {
@@ -189,26 +111,8 @@ export default {
 }
 </script>
 
-
 <style lang="scss" scoped>
-.navbar-brand {
-	opacity: 0.8;
-	&:hover,
-	:active {
-		opacity: 1;
-	}
-}
-
-.navbar-item {
-	figure {
-		img {
-			border-radius: 50%;
-			max-height: 100%;
-		}
-	}
-}
-
-.modal-card {
-	margin: 0 auto;
+.has-margin-top-30 {
+	margin-top: 30px;
 }
 </style>

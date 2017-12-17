@@ -4,7 +4,7 @@
       <div class="content has-text-centered">
         <p>
           <strong>Wantedly</strong> challenge by
-          <a href="https://github.com/rfoel/wantedly">Rafael Franco</a>.
+          <a href="https://github.com/rfoel/wantedly" target="_blank">Rafael Franco</a>.
         </p>
       </div>
     </div>
