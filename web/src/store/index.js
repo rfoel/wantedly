@@ -8,11 +8,16 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    skills: []
+    skills: [],
+    token: !!localStorage.token ? localStorage.token : false
   },
   mutations: {
     setSkills(state, skills) {
       state.skills = skills
+    },
+    setToken(state, token) {
+      localStorage.token = token
+      state.token = token
     }
   },
   actions: {
@@ -26,18 +31,19 @@ export default new Vuex.Store({
     },
     checkUniqueness({}, data) {
       return axios
-      .post("/checkUniqueness", data)
-      .then(response => {
-        return response.data
-      })
-      .catch(error => {
-        return error
-      })
+        .post("/checkUniqueness", data)
+        .then(response => {
+          return response.data
+        })
+        .catch(error => {
+          return error
+        })
     },
     signUp({ commit }, data) {
       return axios
         .post("/users", data)
         .then(response => {
+          commit("setToken", response.data.token)
           return response.data
         })
         .catch(error => {
