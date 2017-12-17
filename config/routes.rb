@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   resource :user, controller: 'user' do
     post "sign_in" => "sessions#create"
     delete "sign_out" => "sessions#destroy"
+    get "skills" => "user#skills"
     post "skill" => "user#create_skill"
     delete "skill" => "user#destroy_skill"
   end

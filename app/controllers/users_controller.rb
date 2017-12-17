@@ -14,7 +14,13 @@ class UsersController < ApiController
   end
 
   def user_skills
-    json_response(@user.skills, :ok)
+    user_skills = []
+    @user.user_skills.each do |user_skill|
+      skill = user_skill.skill.as_json
+      skill[:endorsements] = user_skill.endorsements.as_json
+      user_skills.push(skill) 
+    end
+    json_response(user_skills, :ok)
   end
 
   def create_user_skill
@@ -38,11 +44,11 @@ class UsersController < ApiController
   private
 
   def set_user
-    @user = User.select(:id, :name, :email, :avatar).where(id: params[:id] || params[:user_id]).first
+    @user = User.select(:id, :name, :email, :avatar, :occupation, :location, :bio).where(id: params[:id] || params[:user_id]).first
   end
 
   def user_params
-    params.permit :name, :email, :password
+    params.permit :name, :email, :occupation, :location, :bio, :password
   end
 
   def skill_params
