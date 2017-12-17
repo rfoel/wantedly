@@ -7,6 +7,16 @@ class ApiController < ApplicationController
     @current_user ||= authenticate_token
   end
 
+  def check_uniqueness
+    if params[:email]
+      if User.find_by_email params[:email] 
+        json_response({error: {message: 'Email already in use'}},:ok)        
+      else
+        json_response(:ok)        
+      end
+    end
+  end
+
   protected
 
   def render_unauthorized(message)
