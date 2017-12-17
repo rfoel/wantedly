@@ -8,6 +8,8 @@ class UsersController < ApiController
 
   def create
     @user = User.create!(user_params)
+    @user.avatar = UiFaces.face
+    @user.save!
     json_response(@user, :created)
   end
 
@@ -36,7 +38,7 @@ class UsersController < ApiController
   private
 
   def set_user
-    @user = User.select(:id, :name, :email).where(id: params[:id] || params[:user_id]).first
+    @user = User.select(:id, :name, :email, :avatar).where(id: params[:id] || params[:user_id]).first
   end
 
   def user_params
