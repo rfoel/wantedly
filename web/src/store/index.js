@@ -22,7 +22,7 @@ export default new Vuex.Store({
   },
   actions: {
     getSkills({ commit }) {
-      axios
+      return axios
         .get("/skills")
         .then(response => {
           commit("setSkills", response.data)
@@ -36,7 +36,7 @@ export default new Vuex.Store({
           return response.data
         })
         .catch(error => {
-          return error
+          return {error}
         })
     },
     signUp({ commit }, data) {
@@ -47,7 +47,18 @@ export default new Vuex.Store({
           return response.data
         })
         .catch(error => {
-          return error
+          return {error}
+        })
+    },
+    signIn({ commit }, data) {
+      return axios
+        .post("/user/sign_in", data)
+        .then(response => {
+          commit("setToken", response.data.token)
+          return response
+        })
+        .catch(error => {
+          return {error}
         })
     }
   }
