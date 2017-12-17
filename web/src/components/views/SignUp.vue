@@ -109,6 +109,12 @@ export default {
 					.then(response => {
 						this.isLoading = false
 						if (!response.error) {
+							this.$toast.open({
+								duration: 3000,
+								message: "Signed up successfully",
+								position: "is-top",
+								type: "is-success"
+							})
 							this.status = true
 							setTimeout(() => {
 								this.status = ""
@@ -117,10 +123,16 @@ export default {
 								})
 							}, 1000)
 						} else {
+							this.$toast.open({
+								duration: 3000,
+								message: "Something went terribly wrong",
+								position: "is-top",
+								type: "is-danger"
+							})
 							this.status = false
 							setTimeout(() => {
 								this.status = ""
-							}, 1000)
+							}, 3000)
 						}
 					})
 					.catch(error => {})

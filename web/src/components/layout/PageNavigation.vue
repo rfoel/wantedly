@@ -20,10 +20,31 @@
             Search
           </router-link>
           <hr class="dropdown-divider">
-          <router-link class="navbar-item" :to="{name: 'sign_up'}">
+          <router-link class="navbar-item" :to="{name: 'sign_up'}" v-if="!user_profile">
             Sign up
           </router-link>
-          <b-dropdown position="is-bottom-left">
+          <b-dropdown position="is-bottom-left" v-if="user_profile">
+            <a class="navbar-item" slot="trigger">
+              <figure class="image is-48x48">
+                <img :src="user_profile.avatar">
+              </figure>
+            </a>
+            <b-dropdown-item custom paddingless>
+              <a class="dropdown-item">
+                <h1 class="title is-6">{{user_profile.name}}</h1>
+                <h2 class="subtitle is-6"> {{user_profile.email}}</h2>
+              </a>
+              <hr class="dropdown-divider">
+              <router-link class="dropdown-item" :to="{name: 'home'}">
+                Profile
+              </router-link>
+              <hr class="dropdown-divider">
+              <a class="dropdown-item" @click="signOut">
+                Log out
+              </a>
+            </b-dropdown-item>
+          </b-dropdown>
+          <b-dropdown position="is-bottom-left" v-if="!user_profile">
             <a class="navbar-item" slot="trigger">
               <span>Log in</span>
               <b-icon class="fa fa-angle-down"></b-icon>
@@ -77,83 +98,117 @@
 </template>
 
 <script>
-  import {
-    required,
-    minLength,
-    email
-  } from "vuelidate/lib/validators"
+import { required, minLength, email } from "vuelidate/lib/validators"
 
-  export default {
-    data() {
-      return {
-        isActive: false,
-        isLoading: false,
-        status: "",
-        user: {
-          email: "",
-          password: ""
-        }
-      }
-    },
-    methods: {
-      navbarToggle() {
-        this.isActive = !this.isActive
-      },
-      submit() {
-        this.$v.user.$touch()
-        if (!this.$v.user.$invalid) {
-          this.isLoading = true
-          this.$store
-            .dispatch("signIn", this.user)
-            .then(response => {
-              this.isLoading = false
-              if (!response.error) {
-                this.status = true
-                setTimeout(() => {
-                  this.status = ""
-                  this.$router.push({
-                    name: "home"
-                  })
-                }, 1000)
-              } else {
-                this.status = false
-                setTimeout(() => {
-                  this.status = ""
-                }, 1000)
-              }
-            })
-            .catch(error => {})
-        }
-      }
-    },
-    validations: {
-      user: {
-        email: {
-          required,
-          email
-        },
-        password: {
-          required,
-          minLength: minLength(6)
-        }
-      }
-    }
-  }
-
+export default {
+	data() {
+		return {
+			isActive: false,
+			isLoading: false,
+			status: "",
+			user: {
+				email: "",
+				password: ""
+			}
+		}
+	},
+	computed: {
+		user_profile() {
+			return this.$store.state.user
+		}
+	},
+	methods: {
+		navbarToggle() {
+			this.isActive = !this.isActive
+		},
+		submit() {
+			this.$v.user.$touch()
+			if (!this.$v.user.$invalid) {
+				this.isLoading = true
+				this.$store
+					.dispatch("signIn", this.user)
+					.then(response => {
+						this.isLoading = false
+						if (!response.error) {
+							this.$toast.open({
+								duration: 3000,
+								message: "Logged in successfully",
+								position: "is-top",
+								type: "is-success"
+							})
+							this.$router.push({
+								name: "home"
+							})
+						} else {
+							this.$toast.open({
+								duration: 3000,
+								message: "Invalid email or password (or both)",
+								position: "is-top",
+								type: "is-danger"
+							})
+							this.status = false
+							setTimeout(() => {
+								this.status = ""
+							}, 3000)
+						}
+					})
+					.catch(error => {})
+			}
+		},
+		signOut() {
+			this.$store
+				.dispatch("signOut")
+				.then(response => {
+					if (!response.error) {
+						this.$toast.open({
+							duration: 3000,
+							message: "Logged out successfully",
+							position: "is-top",
+							type: "is-success"
+						})
+						this.$router.push({
+							name: "home"
+						})
+					}
+				})
+				.catch(error => {})
+		}
+	},
+	validations: {
+		user: {
+			email: {
+				required,
+				email
+			},
+			password: {
+				required,
+				minLength: minLength(6)
+			}
+		}
+	}
+}
 </script>
 
 
 <style lang="scss" scoped>
-  .navbar-brand {
-    opacity: 0.8;
-    &:hover,
-    :active {
-      opacity: 1;
-    }
-  }
+.navbar-brand {
+	opacity: 0.8;
+	&:hover,
+	:active {
+		opacity: 1;
+	}
+}
 
-  .modal-card {
-    margin: 0 auto;
-  }
+.navbar-item {
+	figure {
+		img {
+			border-radius: 50%;
+			max-height: 100%;
+		}
+	}
+}
 
+.modal-card {
+	margin: 0 auto;
+}
 </style>

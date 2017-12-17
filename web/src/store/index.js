@@ -9,15 +9,19 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     skills: [],
-    token: !!localStorage.token ? localStorage.token : false
+    user: !!localStorage.user ? JSON.parse(localStorage.user) : false
   },
   mutations: {
     setSkills(state, skills) {
       state.skills = skills
     },
-    setToken(state, token) {
-      localStorage.token = token
-      state.token = token
+    setUser(state, user) {
+      localStorage.user = JSON.stringify(user)
+      state.user = user
+    },
+    signOut(state) {
+      localStorage.removeItem("user")
+      state.user = false
     }
   },
   actions: {
@@ -36,29 +40,44 @@ export default new Vuex.Store({
           return response.data
         })
         .catch(error => {
-          return {error}
+          return { error }
         })
     },
     signUp({ commit }, data) {
       return axios
         .post("/users", data)
         .then(response => {
-          commit("setToken", response.data.token)
+          commit("setUser", response.data)
           return response.data
         })
         .catch(error => {
-          return {error}
+          return { error }
         })
     },
     signIn({ commit }, data) {
       return axios
         .post("/user/sign_in", data)
         .then(response => {
-          commit("setToken", response.data.token)
+          commit("setUser", response.data)
           return response
         })
         .catch(error => {
-          return {error}
+          return { error }
+        })
+    },
+    signOut({ commit }) {
+      return axios
+        .delete("/user/sign_out", {
+          headers: {
+            Authorization: `Token token=${localStorage.user.token}`
+          }
+        })
+        .then(response => {
+          commit("signOut")
+          return response
+        })
+        .catch(error => {
+          return { error }
         })
     }
   }
