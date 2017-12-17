@@ -35,6 +35,27 @@ class UserController < ApiController
     json_response(user_skills, :ok)
   end
 
+  def update_skills
+    skills_id = []
+    params[:skills].each do |skill|
+      skill = Skill.find_or_create(skill[:name])      
+      skills_id.push << skill.id
+      unless current_user.user_skills.where(skill_id: skill.id).count > 0
+        current_user.skills << skill
+      end
+    end
+    
+    if skills_id.any?
+      current_user.skills.where("skill_id NOT IN (?)", skills_id).each do |skill|
+        current_user.skills.destroy(skill)
+      end
+    else
+      current_user.skills.destroy_all
+    end
+    current_user.save!
+    json_response(:ok)    
+  end
+
   def create_skill
     current_user.user_skills.create(skill_params)
     json_response(:ok)

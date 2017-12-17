@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     post "sign_in" => "sessions#create"
     delete "sign_out" => "sessions#destroy"
     get "skills" => "user#skills"
+    post "update_skills" => "user#update_skills"
     post "skill" => "user#create_skill"
     delete "skill" => "user#destroy_skill"
   end
