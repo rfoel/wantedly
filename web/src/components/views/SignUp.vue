@@ -63,11 +63,10 @@
           </div>
 
           <b-field label="What are your skills?">
-            <b-taginput v-model="user_skills" :data="filteredSkills" icon="plus" field="name" placeholder="Add a skill" autocomplete
+            <b-taginput v-model="user_skills" @add="add" :data="filteredSkills" icon="plus" field="name" placeholder="Add a skill" autocomplete
               @typing="getFilteredSkills">
             </b-taginput>
           </b-field>
-          <p class="help">Don't worry, you can add more and different ones later.</p>
 
           <div class="has-text-centered">
             <button class="button is-primary is-outlined has-margin-top-30" :class="{ 'is-loading': isLoading, 'is-success': status, 'is-danger': status === false }">
@@ -126,6 +125,9 @@ export default {
 			if (!this.filteredSkills.length) {
 				this.filteredSkills = [{ name: text }]
 			}
+		},
+		add() {
+			this.user_skills = this.user_skills.filter((skill, index, self) => index === self.findIndex(t => t.name === skill.name))
 		},
 		submit() {
 			this.$v.user.$touch()

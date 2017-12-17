@@ -105,6 +105,22 @@ export default new Vuex.Store({
           return { error }
         })
     },
+    updateSkills({}, data) {
+      console.log(data)
+
+      return axios
+        .post("/user/update_skills", data, {
+          headers: {
+            Authorization: `Token token=${localStorage.token}`
+          }
+        })
+        .then(response => {
+          return response.data
+        })
+        .catch(error => {
+          return { error }
+        })
+    },
     getUser({ commit }, data) {
       return axios
         .get(`/users/${data.id}`)

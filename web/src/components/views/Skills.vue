@@ -7,8 +7,14 @@
           <a class="button" @click="toggleEdit">
             <span>Cancel</span>
           </a>
-          <a class="button is-success" @click="submit">
-            <span>Update</span>
+          <a class="button is-primary is-outlined has-margin-top-30" @click="update" :class="{ 'is-loading': isLoading, 'is-success': status, 'is-danger': status === false }">
+            <span v-if="!isLoading && status === ''">Update</span>
+            <span v-else-if="status">
+              <i class="fa fa-check"></i>
+            </span>
+            <span v-else-if="status === false">
+              <i class="fa fa-close"></i>
+            </span>
           </a>
         </span>
         <span v-else>
@@ -21,7 +27,7 @@
     <div class="content">
       <div v-if="editMode">
         <b-field>
-          <b-taginput v-model="user_skills" @add="add" :data="filteredSkills" icon="plus" field="name" placeholder="Add a skill" autocomplete
+          <b-taginput v-model="updated_skills" @add="add" :data="filteredSkills" icon="plus" field="name" placeholder="Add a skill" autocomplete
             @typing="getFilteredSkills">
           </b-taginput>
         </b-field>
@@ -46,35 +52,20 @@ export default {
 			status: "",
 			skills: [],
 			user_skills: [],
-			filteredSkills: this.skills
+			filteredSkills: this.skills,
+			updated_skills: []
 		}
 	},
 	mounted() {
-		this.$store.dispatch("getSkills").then(response => {
-			this.skills = response
-		})
-		if (this.$route.params.id) {
-			this.canEdit = false
-			this.$store
-				.dispatch("getUserSkills", {
-					id: this.$route.params.id
-				})
-				.then(response => {
-					this.user_skills = response.sort((a, b) => (a.name < b.name && a.endorsements.length >= b.endorsements.length ? -1 : 1))
-				})
-		} else {
-			this.canEdit = true
-			this.$store.dispatch("getCurrentUserSkills").then(response => {
-				this.user_skills = response.sort((a, b) => (a.name < b.name && a.endorsements.length >= b.endorsements.length ? -1 : 1))
-			})
-		}
+		this.getUserSkills()
 	},
 	methods: {
 		toggleEdit() {
 			this.editMode = !this.editMode
+			this.updated_skills = Object.assign([], this.user_skills)
 		},
 		add() {
-			this.user_skills = this.user_skills.filter((skill, index, self) => index === self.findIndex(t => t.id === skill.id))
+			this.updated_skills = this.updated_skills.filter((skill, index, self) => index === self.findIndex(t => t.name === skill.name))
 		},
 		getFilteredSkills(text) {
 			this.filteredSkills = this.skills.filter(option => {
@@ -85,44 +76,63 @@ export default {
 						.indexOf(text.toLowerCase()) >= 0
 				)
 			})
-		},
-		submit() {
-			this.$v.user.$touch()
-			if (!this.$v.user.$invalid) {
-				this.isLoading = true
-				this.$store
-					.dispatch("signUp", this.user)
-					.then(response => {
-						this.isLoading = false
-						if (!response.error) {
-							this.$toast.open({
-								duration: 3000,
-								message: "Signed up successfully",
-								position: "is-top",
-								type: "is-success"
-							})
-							this.status = true
-							setTimeout(() => {
-								this.status = ""
-								this.$router.push({
-									name: "home"
-								})
-							}, 1000)
-						} else {
-							this.$toast.open({
-								duration: 3000,
-								message: "Something went terribly wrong",
-								position: "is-top",
-								type: "is-danger"
-							})
-							this.status = false
-							setTimeout(() => {
-								this.status = ""
-							}, 3000)
-						}
-					})
-					.catch(error => {})
+			if (!this.filteredSkills.length) {
+				this.filteredSkills = [{ name: text }]
 			}
+		},
+		getUserSkills() {
+			this.$store.dispatch("getSkills").then(response => {
+				this.skills = response
+			})
+			if (this.$route.params.id) {
+				this.canEdit = false
+				this.$store
+					.dispatch("getUserSkills", {
+						id: this.$route.params.id
+					})
+					.then(response => {
+						this.user_skills = response.sort((a, b) => (a.name < b.name && a.endorsements.length >= b.endorsements.length ? -1 : 1))
+					})
+			} else {
+				this.canEdit = true
+				this.$store.dispatch("getCurrentUserSkills").then(response => {
+					this.user_skills = response.sort((a, b) => (a.name < b.name && a.endorsements.length >= b.endorsements.length ? -1 : 1))
+				})
+			}
+		},
+		update() {
+			this.isLoading = true
+			this.$store
+				.dispatch("updateSkills", { skills: this.updated_skills })
+				.then(response => {
+					this.isLoading = false
+					if (!response.error) {
+						this.$toast.open({
+							duration: 3000,
+							message: "Skills updated successfully",
+							position: "is-top",
+							type: "is-success"
+						})
+						this.status = true
+						setTimeout(() => {
+							this.status = ""
+							this.toggleEdit()
+							this.getUserSkills()
+						}, 1000)
+					} else {
+						this.$toast.open({
+							duration: 3000,
+							message: "Something went terribly wrong",
+							position: "is-top",
+							type: "is-danger"
+						})
+						this.status = false
+						setTimeout(() => {
+							this.status = ""
+						}, 3000)
+					}
+				})
+				.catch(error => {})
 		}
 	}
 }
