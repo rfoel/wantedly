@@ -2,13 +2,7 @@ class UserController < ApiController
   before_action :require_login
 
   def show
-    render json: {
-      id: current_user.id,
-      name: current_user.name,
-      email: current_user.email,
-      created_at: current_user.created_at,
-      updated_at: current_user.updated_at
-    }
+    json_response(current_user, :ok)    
   end
 
   def update
@@ -29,6 +23,16 @@ class UserController < ApiController
     user = User.find_by! id: params[:id].to_i
     user.destroy!
     json_response(:ok)
+  end
+
+  def skills
+    user_skills = []
+    current_user.user_skills.each do |user_skill|
+      skill = user_skill.skill.as_json
+      skill[:endorsements] = user_skill.endorsements.as_json
+      user_skills.push(skill) 
+    end
+    json_response(user_skills, :ok)
   end
 
   def create_skill

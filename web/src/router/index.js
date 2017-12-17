@@ -7,6 +7,7 @@ import Search from "@/components/views/Search.vue"
 import SignUp from "@/components/views/SignUp.vue"
 import SignIn from "@/components/views/SignIn.vue"
 import Profile from "@/components/views/Profile.vue"
+import User from "@/components/views/User.vue"
 
 Vue.use(Router)
 
@@ -43,13 +44,19 @@ const router = new Router({
       name: "profile",
       component: Profile,
       meta: { auth: true }
+    },
+    {
+      path: "/users/:id",
+      name: "users_profile",
+      component: User,
+      meta: { auth: false }
     }
   ]
 })
 
 router.beforeEach((to, from, next) => {
   const auth = to.matched.some(route => route.meta.auth)
-  const logged = store.state.user ? true : false
+  const logged = store.state.token ? true : false
   if (auth && !logged) {
     next("/user/sign_in")
   } else if (!auth && logged) {

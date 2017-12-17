@@ -20,10 +20,10 @@
             Search
           </router-link>
           <hr class="dropdown-divider">
-          <router-link class="navbar-item" :to="{name: 'sign_up'}" v-if="!user_profile">
+          <router-link class="navbar-item" :to="{name: 'sign_up'}" v-if="!token">
             Sign up
           </router-link>
-          <b-dropdown position="is-bottom-left" v-if="user_profile">
+          <b-dropdown position="is-bottom-left" v-if="token">
             <a class="navbar-item" slot="trigger">
               <figure class="image is-48x48">
                 <img :src="user_profile.avatar">
@@ -44,7 +44,7 @@
               </a>
             </b-dropdown-item>
           </b-dropdown>
-          <b-dropdown position="is-bottom-left" v-if="!user_profile">
+          <b-dropdown position="is-bottom-left" v-if="!token">
             <a class="navbar-item" slot="trigger">
               <span>Log in</span>
               <b-icon class="fa fa-angle-down"></b-icon>
@@ -106,6 +106,7 @@ export default {
 			isActive: false,
 			isLoading: false,
 			status: "",
+			user_profile: {},
 			user: {
 				email: "",
 				password: ""
@@ -113,13 +114,28 @@ export default {
 		}
 	},
 	computed: {
-		user_profile() {
-			return this.$store.state.user
+		token() {
+			return this.$store.state.token ? true : false
 		}
+	},
+	watch: {
+		token() {
+			this.getUser()
+		}
+	},
+	created() {
+		this.getUser()
 	},
 	methods: {
 		navbarToggle() {
 			this.isActive = !this.isActive
+		},
+		getUser() {
+			if (this.token) {
+				this.$store.dispatch("getProfile").then(response => {
+					this.user_profile = response
+				})
+			}
 		},
 		submit() {
 			this.$v.user.$touch()

@@ -8,7 +8,8 @@
           <div class="field">
             <label class="label">Name</label>
             <div class="control">
-              <input name="name" class="input" type="text" placeholder="Your name" v-model.trim="user.name" @input="$v.user.name.$touch()" :class="{ 'is-danger': $v.user.name.$error }">
+              <input name="name" class="input" type="text" placeholder="Your name" v-model.trim="user.name" @input="$v.user.name.$touch()"
+                :class="{ 'is-danger': $v.user.name.$error }">
             </div>
             <p class="help is-danger" v-if="$v.user.name.$error">
               <span v-if="!$v.user.name.required">Name is required</span>
@@ -18,7 +19,8 @@
           <div class="field">
             <label class="label">Email</label>
             <div class="control has-icons-right">
-              <input name="email" class="input" type="text" placeholder="Your email" v-model.trim="user.email" @blur="$v.user.email.$touch()" @input="$v.user.email.$reset()" :class="{ 'is-danger': $v.user.email.$error }">
+              <input name="email" class="input" type="text" placeholder="Your email" v-model.trim="user.email" @blur="$v.user.email.$touch()"
+                @input="$v.user.email.$reset()" :class="{ 'is-danger': $v.user.email.$error }">
             </div>
             <p class="help is-danger" v-if="$v.user.email.$error">
               <span v-if="!$v.user.email.required">Email is required</span>
@@ -37,6 +39,27 @@
               <span v-if="!$v.user.password.required">Password is required</span>
               <span v-else-if="!$v.user.password.minLength">Password must have at least {{ $v.user.password.$params.minLength.min }} characters</span>
             </p>
+          </div>
+
+          <div class="field">
+            <label class="label">Occupation</label>
+            <div class="control">
+              <input name="occupation" class="input" type="text" placeholder="Your occupation" v-model.trim="user.occupation">
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Location</label>
+            <div class="control">
+              <input name="location" class="input" type="text" placeholder="Your location" v-model.trim="user.location">
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Bio</label>
+            <div class="control">
+              <input name="bio" class="input" type="text" placeholder="Say something about yourself" v-model.trim="user.bio">
+            </div>
           </div>
 
           <b-field label="What are your skills?">
@@ -72,22 +95,23 @@ export default {
 		return {
 			isLoading: false,
 			status: "",
+			skills: [],
 			filteredSkills: this.skills,
 			user: {
 				name: "",
 				email: "",
+				occupation: "",
+				location: "",
+				bio: "",
 				password: "",
 				skills: []
 			}
 		}
 	},
-	computed: {
-		skills() {
-			return this.$store.state.skills
-		}
-	},
 	created() {
-		this.$store.dispatch("getSkills")
+		this.$store.dispatch("getSkills").then(response => {
+			this.skills = response
+		})
 	},
 	methods: {
 		getFilteredSkills(text) {
@@ -144,6 +168,9 @@ export default {
 			name: {
 				required
 			},
+			occupation: {},
+			location: {},
+			bio: {},
 			email: {
 				required,
 				email,
@@ -151,7 +178,9 @@ export default {
 					if (value === "") return true
 					return new Promise((resolve, reject) => {
 						this.$store
-							.dispatch("checkUniqueness", { email: this.user.email })
+							.dispatch("checkUniqueness", {
+								email: this.user.email
+							})
 							.then(response => {
 								if (response.error) resolve(false)
 								else resolve(true)

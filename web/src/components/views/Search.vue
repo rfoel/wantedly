@@ -12,7 +12,7 @@
           <div class="column"></div>
           <div class="column is-full-tablet is-three-fifths-desktop">
             <div class="control has-icons-left">
-              <input class="input is-medium" type="text" placeholder="Find people, people, and people">
+              <input class="input is-medium" type="text" placeholder="Find people">
               <span class="icon is-left">
                 <i class="fa fa-search"></i>
               </span>

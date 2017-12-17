@@ -8,20 +8,16 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    skills: [],
-    user: !!localStorage.user ? JSON.parse(localStorage.user) : false
+    token: !!localStorage.token ? JSON.parse(localStorage.token) : false
   },
   mutations: {
-    setSkills(state, skills) {
-      state.skills = skills
-    },
-    setUser(state, user) {
-      localStorage.user = JSON.stringify(user)
-      state.user = user
+    signIn(state, token) {
+      localStorage.token = JSON.stringify(token)
+      state.token = token
     },
     signOut(state) {
-      localStorage.removeItem("user")
-      state.user = false
+      localStorage.removeItem("token")
+      state.token = false
     }
   },
   actions: {
@@ -29,7 +25,7 @@ export default new Vuex.Store({
       return axios
         .get("/skills")
         .then(response => {
-          commit("setSkills", response.data)
+          return response.data
         })
         .catch(error => {})
     },
@@ -47,8 +43,8 @@ export default new Vuex.Store({
       return axios
         .post("/users", data)
         .then(response => {
-          commit("setUser", response.data)
-          return response.data
+          commit("signIn", response.data.token)
+          return response
         })
         .catch(error => {
           return { error }
@@ -58,7 +54,7 @@ export default new Vuex.Store({
       return axios
         .post("/user/sign_in", data)
         .then(response => {
-          commit("setUser", response.data)
+          commit("signIn", response.data.token)
           return response
         })
         .catch(error => {
@@ -69,7 +65,7 @@ export default new Vuex.Store({
       return axios
         .delete("/user/sign_out", {
           headers: {
-            Authorization: `Token token=${localStorage.user.token}`
+            Authorization: `Token token=${localStorage.token}`
           }
         })
         .then(response => {
@@ -79,6 +75,50 @@ export default new Vuex.Store({
         .catch(error => {
           return { error }
         })
+    },
+    getProfile({ commit }) {
+      return axios
+        .get("/user", {
+          headers: {
+            Authorization: `Token token=${localStorage.token}`
+          }
+        })
+        .then(response => {
+          return response.data
+        })
+        .catch(error => {
+          return { error }
+        })
+    },
+    getCurrentUserSkills({ commit }) {
+      return axios
+        .get("/user/skills", {
+          headers: {
+            Authorization: `Token token=${localStorage.token}`
+          }
+        })
+        .then(response => {
+          return response.data
+        })
+        .catch(error => {
+          return { error }
+        })
+    },
+    getUser({ commit }, data) {
+      return axios
+        .get(`/users/${data.id}`)
+        .then(response => {
+          return response.data
+        })
+        .catch(error => {})
+    },
+    getUserSkills({ commit }, data) {
+      return axios
+        .get(`/users/${data.id}/skills`)
+        .then(response => {
+          return response.data
+        })
+        .catch(error => {})
     }
   }
 })

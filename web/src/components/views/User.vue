@@ -33,26 +33,12 @@
               </div>
             </div>
           </div>
-          <div class="tile is-parent">
-            <article class="tile is-child notification is-light">
-              <div class="content">
-                <p class="title is-6">Your profile link
-                  <router-link :to="{name: 'users_profile', params:{ id: user.id }}">
-                    <i class="fa fa-external-link"></i>
-                  </router-link>
-                </p>
-                <div class="content">
-                  {{profile_link}}
-                </div>
-              </div>
-            </article>
-          </div>
         </div>
         <div class="tile is-ancestor">
           <div class="tile">
             <div class="tile is-parent">
               <article class="tile is-child notification is-white">
-                <skills :user_id="user.id"></skills>
+                <skills></skills>
               </article>
             </div>
           </div>
@@ -79,22 +65,14 @@ export default {
 			}
 		}
 	},
-	computed: {
-		profile_link() {
-			const a = document.createElement("a")
-			a.href = this.$router.resolve({
-				name: "users_profile",
-				params: {
-					id: this.user.id
-				}
-			}).href
-			return a.protocol + "//" + a.host + a.pathname
-		}
-	},
 	created() {
-		this.$store.dispatch("getProfile").then(response => {
-			this.user = response
-		})
+		this.$store
+			.dispatch("getUser", {
+				id: this.$route.params.id
+			})
+			.then(response => {
+				this.user = response
+			})
 	},
 	methods: {
 		submit() {

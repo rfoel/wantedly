@@ -8,13 +8,24 @@
         <h2 class="subtitle">
           Grow your professional network on Wantedly
         </h2>
-        <p>
+        <p v-if="!token">
           <router-link :to="{name: 'sign_up'}" class="button is-primary is-outlined">Sign up with you email</router-link>
         </p>
       </div>
     </div>
   </section>
 </template>
+
+<script>
+export default {
+  computed: {
+    token() {
+      return this.$store.state.token ? true : false
+    }
+  }
+}
+</script>
+
 
 <style lang="scss" scoped>
 .hero {
