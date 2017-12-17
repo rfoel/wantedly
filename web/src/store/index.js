@@ -35,13 +35,13 @@ export default new Vuex.Store({
       })
     },
     signUp({ commit }, data) {
-      axios
+      return axios
         .post("/users", data)
         .then(response => {
-          console.log(response)
+          return response.data
         })
         .catch(error => {
-          console.log(error)
+          return error
         })
     }
   }

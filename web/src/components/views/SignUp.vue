@@ -141,7 +141,8 @@ export default {
 						this.$store
 							.dispatch("checkUniqueness", { email: this.user.email })
 							.then(response => {
-								if(response.error) resolve()
+								if (response.error) resolve(false)
+								else resolve(true)
 							})
 							.catch(error => {
 								reject(error)
@@ -152,7 +153,8 @@ export default {
 			password: {
 				required,
 				minLength: minLength(6)
-			}
+			},
+			skills: {}
 		}
 	}
 }
