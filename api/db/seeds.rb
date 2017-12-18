@@ -1,11 +1,4 @@
-require 'database_cleaner'
 puts 'Seeding...'
-
-DatabaseCleaner.clean_with(
-  :truncation,
-  except: %w(ar_internal_metadata)
-)
-DatabaseCleaner.clean
 
 (0..10).each do
   Skill.create(name: Faker::ProgrammingLanguage.name)
