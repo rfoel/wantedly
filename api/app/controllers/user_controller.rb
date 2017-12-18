@@ -27,9 +27,14 @@ class UserController < ApiController
 
   def skills
     user_skills = []
-    current_user.user_skills.each do |user_skill|
-      skill = user_skill.skill.as_json
-      skill[:endorsements] = user_skill.endorsements.as_json
+    current_user.user_skills.each do |u|
+      skill = u.skill.as_json
+      skill[:endorsements] = []
+      u.endorsements.each do |e|
+        endorsement = e.as_json
+        endorsement[:endorser] = e.endorser.as_json
+        skill[:endorsements] << endorsement
+      end
       user_skills.push(skill) 
     end
     json_response(user_skills, :ok)

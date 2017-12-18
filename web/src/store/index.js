@@ -17,7 +17,7 @@ export default new Vuex.Store({
       state.token = token
     },
     setUser(state, data) {
-      localStorage.current_user = JSON.stringify(data)      
+      localStorage.current_user = JSON.stringify(data)
       state.current_user = data
     },
     signOut(state) {
@@ -50,7 +50,8 @@ export default new Vuex.Store({
       return axios
         .post("/users", data)
         .then(response => {
-          commit("signIn", response.data)
+          commit("signIn", response.data.token)
+          commit("setUser", response.data)
           return response
         })
         .catch(error => {
@@ -137,6 +138,34 @@ export default new Vuex.Store({
     getUserSkills({ commit }, data) {
       return axios
         .get(`/users/${data.id}/skills`)
+        .then(response => {
+          return response.data
+        })
+        .catch(error => {})
+    },
+    recommend({ commit }, data) {
+      return axios
+        .post(
+          `/users/${data.user_id}/skills`,
+          { skill: data.recommend },
+          {
+            headers: {
+              Authorization: `Token token=${localStorage.token}`
+            }
+          }
+        )
+        .then(response => {
+          return response.data
+        })
+        .catch(error => {})
+    },
+    endorse({ commit }, data) {
+      return axios
+        .get(`/users/${data.user_id}/skills/${data.skill_id}/endorse`, {
+          headers: {
+            Authorization: `Token token=${localStorage.token}`
+          }
+        })
         .then(response => {
           return response.data
         })

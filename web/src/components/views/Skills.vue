@@ -23,19 +23,54 @@
           </a>
         </span>
       </span>
+      <span v-else>
+        <b-dropdown position="is-bottom-left" class="is-pulled-right">
+          <a class="button is-primary is-outlined" slot="trigger">
+            <span>Recommend skill</span>
+          </a>
+          <b-dropdown-item custom paddingless>
+            <form @submit.prevent="recommend">
+              <div class="modal-card" style="width:300px; overflow: visible;">
+                <section class="modal-card-body" style="overflow: visible;">
+                  <b-field>
+                    <b-autocomplete v-model="recommend_skill" :data="filteredDataObj" field="name" placeholder="Add a skill">
+                    </b-autocomplete>
+                  </b-field>
+                  <button class="button is-primary" :class="{ 'is-loading': isLoading, 'is-success': status, 'is-danger': status === false }">
+                    <span v-if="!isLoading && status === ''">Recommend</span>
+                    <span v-else-if="status">
+                      <i class="fa fa-check"></i>
+                    </span>
+                    <span v-else-if="status === false">
+                      <i class="fa fa-close"></i>
+                    </span>
+                  </button>
+                </section>
+              </div>
+            </form>
+          </b-dropdown-item>
+        </b-dropdown>
+      </span>
     </p>
     <div class="content">
       <div v-if="editMode">
         <b-field>
-          <b-taginput v-model="updated_skills" @add="add" :data="filteredSkills" icon="plus" field="name" placeholder="Add a skill" autocomplete
-            @typing="getFilteredSkills">
+          <b-taginput v-model="updated_skills" @add="add" :data="filteredSkills" icon="plus" field="name" placeholder="Add a skill"
+            autocomplete @typing="getFilteredSkills">
           </b-taginput>
         </b-field>
       </div>
 
       <div v-else>
-        <div class="field" v-for="(user_skill, index) in user_skills" :key="index">
-          <b-tag rounded :keep-first="true" size="is-medium" :class="{'can-endorse': !canEdit}"><span>{{user_skill.endorsements.length}}</span></b-tag> {{user_skill.name}}
+        <div class="field" v-for="user_skill in user_skills" :key="user_skill.id">
+          <b-tag rounded :keep-first="true" size="skill is-medium" :class="{'can-endorse': !canEdit}" @click.native="endorse(user_skill)">
+            <span>{{user_skill.endorsements.length}}</span>
+          </b-tag> {{user_skill.name}}
+          <div class="endorsment is-pulled-right" v-for="endorsement in user_skill.endorsements" :key="endorsement.id">
+            <router-link :to="{name: 'user', params: {id: endorsement.endorser_id}}">
+              <img :src="endorsement.endorser.avatar" class="image is-32x32">
+            </router-link>
+          </div>
         </div>
       </div>
     </div>
@@ -54,16 +89,32 @@ export default {
 			skills: [],
 			user_skills: [],
 			filteredSkills: this.skills,
-			updated_skills: []
+			updated_skills: [],
+			recommend_skill: ""
 		}
 	},
 	computed: {
 		current_user() {
 			return this.$store.state.current_user
+		},
+		filteredDataObj() {
+			return this.skills.filter(option => {
+				return (
+					option.name
+						.toString()
+						.toLowerCase()
+						.indexOf(this.recommend_skill.toLowerCase()) >= 0
+				)
+			})
 		}
 	},
-	mounted() {
+	created() {
 		this.getUserSkills()
+	},
+	watch: {
+		$route(to, from) {
+			this.getUserSkills()
+		}
 	},
 	methods: {
 		toggleEdit() {
@@ -83,7 +134,11 @@ export default {
 				)
 			})
 			if (!this.filteredSkills.length) {
-				this.filteredSkills = [{ name: text }]
+				this.filteredSkills = [
+					{
+						name: text
+					}
+				]
 			}
 		},
 		getUserSkills() {
@@ -91,25 +146,86 @@ export default {
 				this.skills = response
 			})
 			if (this.$route.params.id) {
-				this.canEdit = this.$route.params.id === this.current_user.id ? true : false
+				this.canEdit = this.$route.params.id == this.current_user.id ? true : false
 				this.$store
 					.dispatch("getUserSkills", {
 						id: this.$route.params.id
 					})
 					.then(response => {
-						this.user_skills = response.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() && a.endorsements.length >= b.endorsements.length ? -1 : 1))
+						this.user_skills = response.sort(
+							(a, b) => (a.name.toLowerCase() < b.name.toLowerCase() && a.endorsements.length >= b.endorsements.length ? -1 : 1)
+						)
 					})
 			} else {
 				this.canEdit = true
 				this.$store.dispatch("getCurrentUserSkills").then(response => {
-					this.user_skills = response.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() && a.endorsements.length >= b.endorsements.length ? -1 : 1))
+					this.user_skills = response.sort(
+						(a, b) => (a.name.toLowerCase() < b.name.toLowerCase() && a.endorsements.length >= b.endorsements.length ? -1 : 1)
+					)
 				})
 			}
+		},
+		recommend() {
+			this.$store
+				.dispatch("recommend", {
+					user_id: this.$route.params.id,
+					recommend: this.recommend_skill
+				})
+				.then(response => {
+					if (!response.error) {
+						this.$toast.open({
+							duration: 3000,
+							message: "Skill recommended successfully",
+							position: "is-top",
+							type: "is-success"
+						})
+						this.getUserSkills()
+						this.recommend_skill = ""
+					} else {
+						this.$toast.open({
+							duration: 3000,
+							message: "Something went terribly wrong",
+							position: "is-top",
+							type: "is-danger"
+						})
+					}
+				})
+				.catch(error => {})
+		},
+		endorse(skill) {
+			if (this.canEdit) return
+
+			this.$store
+				.dispatch("endorse", {
+					user_id: this.$route.params.id,
+					skill_id: skill.id
+				})
+				.then(response => {
+					if (!response.error) {
+						this.$toast.open({
+							duration: 3000,
+							message: "User skill endorsed successfully",
+							position: "is-top",
+							type: "is-success"
+						})
+						this.getUserSkills()
+					} else {
+						this.$toast.open({
+							duration: 3000,
+							message: "Something went terribly wrong",
+							position: "is-top",
+							type: "is-danger"
+						})
+					}
+				})
+				.catch(error => {})
 		},
 		update() {
 			this.isLoading = true
 			this.$store
-				.dispatch("updateSkills", { skills: this.updated_skills })
+				.dispatch("updateSkills", {
+					skills: this.updated_skills
+				})
 				.then(response => {
 					this.isLoading = false
 					if (!response.error) {
@@ -120,11 +236,9 @@ export default {
 							type: "is-success"
 						})
 						this.status = true
-						setTimeout(() => {
-							this.status = ""
-							this.toggleEdit()
-							this.getUserSkills()
-						}, 1000)
+						this.status = ""
+						this.toggleEdit()
+						this.getUserSkills()
 					} else {
 						this.$toast.open({
 							duration: 3000,
@@ -148,7 +262,7 @@ export default {
 <style lang="scss" scoped>
 $primary: #00a4bb;
 
-.tag {
+.skill {
 	border: 2px solid $primary;
 	color: $primary;
 	background: transparent;
@@ -157,6 +271,7 @@ $primary: #00a4bb;
 	margin-right: 10px;
 	margin-bottom: 10px;
 	cursor: pointer;
+
 	&.can-endorse {
 		&:hover {
 			color: #fff;
@@ -173,5 +288,16 @@ $primary: #00a4bb;
 			background: darken($primary, 5%);
 		}
 	}
+}
+
+.endorsment {
+	img {
+		border-radius: 50%;
+	}
+	width: 30px;
+	height: 30px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	cursor: pointer;
 }
 </style>

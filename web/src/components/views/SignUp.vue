@@ -145,12 +145,10 @@ export default {
 								type: "is-success"
 							})
 							this.status = true
-							setTimeout(() => {
-								this.status = ""
-								this.$router.push({
-									name: "home"
-								})
-							}, 1000)
+							this.status = ""
+							this.$router.push({
+								name: "home"
+							})
 						} else {
 							this.$toast.open({
 								duration: 3000,

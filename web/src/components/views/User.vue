@@ -66,52 +66,22 @@ export default {
 		}
 	},
 	created() {
-		this.$store
-			.dispatch("getUser", {
-				id: this.$route.params.id
-			})
-			.then(response => {
-				this.user = response
-			})
+		this.getUser()
+	},
+	watch: {
+		$route(to, from) {
+			this.getUser()
+		}
 	},
 	methods: {
-		submit() {
-			this.$v.user.$touch()
-			if (!this.$v.user.$invalid) {
-				this.isLoading = true
-				this.$store
-					.dispatch("signUp", this.user)
-					.then(response => {
-						this.isLoading = false
-						if (!response.error) {
-							this.$toast.open({
-								duration: 3000,
-								message: "Signed up successfully",
-								position: "is-top",
-								type: "is-success"
-							})
-							this.status = true
-							setTimeout(() => {
-								this.status = ""
-								this.$router.push({
-									name: "home"
-								})
-							}, 1000)
-						} else {
-							this.$toast.open({
-								duration: 3000,
-								message: "Something went terribly wrong",
-								position: "is-top",
-								type: "is-danger"
-							})
-							this.status = false
-							setTimeout(() => {
-								this.status = ""
-							}, 3000)
-						}
-					})
-					.catch(error => {})
-			}
+		getUser() {
+			this.$store
+				.dispatch("getUser", {
+					id: this.$route.params.id
+				})
+				.then(response => {
+					this.user = response
+				})
 		}
 	}
 }
