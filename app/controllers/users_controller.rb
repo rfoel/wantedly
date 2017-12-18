@@ -18,17 +18,26 @@ class UsersController < ApiController
 
   def user_skills
     user_skills = []
-    @user.user_skills.each do |user_skill|
-      skill = user_skill.skill.as_json
-      skill[:endorsements] = user_skill.endorsements.as_json
+    @user.user_skills.each do |u|
+      skill = u.skill.as_json
+      skill[:endorsements] = []
+      u.endorsements.each do |e|
+        endorsement = e.as_json
+        endorsement[:endorser] = e.endorser.as_json
+        skill[:endorsements] << endorsement
+      end
       user_skills.push(skill) 
     end
     json_response(user_skills, :ok)
   end
 
   def create_user_skill
-    user_skill = @user.user_skills.create!(skill_params)
-    endorse_user_skill user_skill, current_user
+    
+    @user.skills << Skill.find_or_create(params[:skill])
+    puts '###########################################'
+    puts @user.user_skills.last
+    puts '###########################################'
+    endorse_user_skill @user.user_skills.last, current_user
     json_response(:ok)
   end
 
@@ -40,7 +49,7 @@ class UsersController < ApiController
 
   def endorse_user_skill user_skill, current_user
     if current_user != user_skill.user
-      Endorsement.create!(user_skill: user_skill, endorser: current_user)
+      Endorsement.create(user_skill: user_skill, endorser: current_user)
     end
   end
 
