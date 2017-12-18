@@ -129,7 +129,7 @@ export default new Vuex.Store({
     },
     getUser({ commit }, data) {
       return axios
-        .get("/users/"+data.id)
+        .get(`/users/${data.id}`)
         .then(response => {
           return response.data
         })
