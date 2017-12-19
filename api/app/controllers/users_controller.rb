@@ -36,12 +36,8 @@ class UsersController < ApiController
     json_response(user_skills, :ok)
   end
 
-  def create_user_skill
-    
+  def create_user_skill    
     @user.skills << Skill.find_or_create(params[:skill])
-    puts '###########################################'
-    puts @user.user_skills.last
-    puts '###########################################'
     endorse_user_skill @user.user_skills.last, current_user
     json_response(:ok)
   end

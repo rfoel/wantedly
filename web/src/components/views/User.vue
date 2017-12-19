@@ -37,9 +37,9 @@
         <div class="tile is-ancestor">
           <div class="tile">
             <div class="tile is-parent">
-              <article class="tile is-child notification is-white">
+              <div class="tile is-child">
                 <skills></skills>
-              </article>
+              </div>
             </div>
           </div>
         </div>

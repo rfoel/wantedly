@@ -51,7 +51,7 @@ export default {
 						}
 					})
 					.catch(error => {})
-			}, 500)
+			}, 1000)
 		},
 		goToUser(user) {
 			if (user) {
