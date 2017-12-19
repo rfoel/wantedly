@@ -7,7 +7,7 @@ class UsersController < ApiController
   end
 
   def autocomplete
-    @users = User.where("LOWER(name) like LOWER(?)", "%#{params[:term]}%").order(:name)
+    @users = User.where("name ILIKE ?", "%#{params[:term]}%").order(:name)
     json_response(@users, :ok)
   end
 
