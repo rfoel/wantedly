@@ -2,8 +2,13 @@ class UsersController < ApiController
   before_action :require_login, only: [:endorse, :create_user_skill]  
   before_action :set_user, only: [:show, :user_skills, :create_user_skill]
 
-   def show
+  def show
     render json: @user
+  end
+
+  def autocomplete
+    @users = User.where("name like ?", "%#{params[:term]}%").order(:name)
+    json_response(@users, :ok)
   end
 
   def create

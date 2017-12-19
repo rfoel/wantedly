@@ -5,6 +5,8 @@ Rails.application.routes.draw do
     post "skills" => "users#create_user_skill"
     get "skills/:skill_id/endorse" => "users#endorse"
   end
+  get "autocomplete" => "users#autocomplete"
+  
   resource :user, controller: 'user' do
     post "sign_in" => "sessions#create"
     delete "sign_out" => "sessions#destroy"
