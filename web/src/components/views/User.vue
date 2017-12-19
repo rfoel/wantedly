@@ -4,7 +4,7 @@
       <div class="column"></div>
       <div class="column is-full-mobile is-four-fifths-tablet">
         <div class="tile is-ancestor">
-          <div class="tile is-vertical is-8">
+          <div class="tile is-vertical is-12">
             <div class="tile">
               <div class="tile is-parent">
                 <article class="media">
@@ -89,6 +89,11 @@ export default {
 
 
 <style lang="scss" scoped>
+.media {
+  display: flex;
+  flex-grow: 1;
+  align-items: stretch
+}
 .is-centered {
 	margin-left: auto;
 	margin-right: auto;

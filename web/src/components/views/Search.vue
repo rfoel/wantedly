@@ -11,12 +11,11 @@
         <div class="columns">
           <div class="column"></div>
           <div class="column is-full-tablet is-three-fifths-desktop">
-            <div class="control has-icons-left">
-              <input class="input is-medium" type="text" placeholder="Find people">
-              <span class="icon is-left">
-                <i class="fa fa-search"></i>
-              </span>
-            </div>
+            <b-field>
+              <b-autocomplete v-model="term" :data="data" placeholder="Find people" icon="fa fa-search" field="name" :loading="isFetching" @input="getAsyncData"
+                @select="option => goToUser(option)">
+              </b-autocomplete>
+            </b-field>
           </div>
           <div class="column"></div>
         </div>
@@ -29,7 +28,35 @@
 export default {
 	data() {
 		return {
-			search: ""
+			data: [],
+			term: "",
+			selected: undefined,
+			isFetching: false
+		}
+	},
+	methods: {
+		getAsyncData() {
+			setTimeout(() => {
+				this.data = []
+				this.isFetching = true
+
+				this.$store
+					.dispatch("getUsers", {
+						term: this.term
+					})
+					.then(response => {
+						if (!response.error) {
+							response.forEach(item => this.data.push(item))
+							this.isFetching = false
+						}
+					})
+					.catch(error => {})
+			}, 500)
+		},
+		goToUser(user) {
+			if (user) {
+				this.$router.push({ name: "user", params: { id: user.id } })
+			}
 		}
 	}
 }
@@ -39,7 +66,7 @@ export default {
 <style lang="scss" scoped>
 .hero {
 	.hero-body {
-		min-height: 600px;
+		min-height: 400px;
 		display: flex;
 		align-items: center;
 		justify-content: center;

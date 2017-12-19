@@ -1,8 +1,10 @@
 <template>
   <section>
-    <p class="title is-3">
-      What I'm good at
-      <span v-if="canEdit">
+    <div class="columns">
+      <span class="title is-3 column is-half-desktop">
+        What I'm good at
+      </span>
+      <span v-if="canEdit" class="column">
         <span v-if="editMode" class="is-pulled-right">
           <a class="button" @click="toggleEdit">
             <span>Cancel</span>
@@ -23,7 +25,7 @@
           </a>
         </span>
       </span>
-      <span v-else>
+      <span v-else class="column is-half-desktop">
         <b-dropdown position="is-bottom-left" class="is-pulled-right">
           <a class="button is-primary is-outlined" slot="trigger">
             <span>Recommend skill</span>
@@ -51,7 +53,7 @@
           </b-dropdown-item>
         </b-dropdown>
       </span>
-    </p>
+    </div>
     <div class="content">
       <div v-if="editMode">
         <b-field>

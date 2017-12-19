@@ -170,6 +170,14 @@ export default new Vuex.Store({
           return response.data
         })
         .catch(error => {})
+    },
+    getUsers({ commit }, data) {
+      return axios
+        .get("/autocomplete", { params: { term: data.term } })
+        .then(response => {
+          return response.data
+        })
+        .catch(error => {})
     }
   }
 })
