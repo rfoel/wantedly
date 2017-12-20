@@ -158,15 +158,16 @@ export default {
 						id: this.$route.params.id
 					})
 					.then(response => {
+						console.log(response)
 						this.user_skills = response.sort(
-							(a, b) => (a.name.toLowerCase() < b.name.toLowerCase() && a.endorsements.length >= b.endorsements.length ? -1 : 1)
+							(a, b) => (a.endorsements.length <= b.endorsements.length || a.name.toLowerCase() < b.name.toLowerCase() ? 1 : -1)
 						)
 					})
 			} else {
 				this.canEdit = true
 				this.$store.dispatch("getCurrentUserSkills").then(response => {
 					this.user_skills = response.sort(
-						(a, b) => (a.name.toLowerCase() < b.name.toLowerCase() && a.endorsements.length >= b.endorsements.length ? -1 : 1)
+						(a, b) => (a.endorsements.length <= b.endorsements.length || a.name.toLowerCase() < b.name.toLowerCase() ? 1 : -1)
 					)
 				})
 			}
