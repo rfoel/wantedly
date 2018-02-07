@@ -1,12 +1,6 @@
-# Wantedly challenge
+# Wantedly - LinkedIn like social networking platform
 
 Made with Ruby, Ruby on Rails, PostgreSQL, Vue.js and Bulma.
-
-## Demo
-
-[See the demo here](https://wantedly-web.herokuapp.com/)
-
-[See a demo profile here](https://wantedly-web.herokuapp.com/users/1)
 
 ## API endpoints
 
