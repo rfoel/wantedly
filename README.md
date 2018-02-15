@@ -1,4 +1,4 @@
-# Wantedly - LinkedIn like social networking platform
+# Wantedly - LinkedIn-like social networking platform
 
 Made with Ruby, Ruby on Rails, PostgreSQL, Vue.js and Bulma.
 
